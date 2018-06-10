@@ -1,0 +1,117 @@
+linux下软件安装方式RPM、SRPM
+
+（摘录于鸟叔的Linux私房菜）
+
+一、什么是RPM与SRPM
+
+RPM全名是RedHat Package Manager。RPM是一种数据库记录的方式来将你所需要的软件安装到你的Linux系统的一套管理机制。它的最大特点就是将你要安装的软件先编译过，并且打包成为RPM机制的包装文件，透过包装好的软件里面默认的数据库记录，记录这个软件要安装的时候必须具备的相依属性软件。当安装在你的Linux主机时，RPM会依照软件里头的数据查询linux主机的相依属性软件是否满足，如满足则可以安装，反之则不能安装。同时，安装时会将该软件的信息整个写入RPM数据库中，以便未来的查询、验证与反安装。
+
+RPM的缺陷，因为RPM文件都是已经编译好的文件，所以该软件几乎只能安装在原本默认的硬件与操作系统版本中。也就是说，你的主机系统环境必须要与当初建立这个软件文件的主机环境相同才行。
+
+SRPM是指Source RPM，SRPM提供的软件内容是没有经过编译的，它提供的是原始码。通常SRPM的扩展名是以***.src.rpm。SRPM虽然提供的是原始码，但是它仍然含有该软件所需要的相依性软件说明、以及所有RPM文件所提供的数据。同时与PRM不同的是，它也提供了参数配置文件（configure、makefile）
+
+二、RPM软件安装目录
+
+/etc 一些配置文件放置的目录，例如：/etc/crontab
+
+/usr/bin 一些可执行文件
+
+/usr/lib  一些程序使用的动态链接库
+
+/usr/share/doc  一些基本的软件使用手册和说明文件
+
+/usr/share/man  一些man page文件
+
+软件安装完毕后，该软件的相关信息就会被写入/var/lib/rpm目录下的数据库文件中。
+
+三、RPM操作
+
+PRM安装（install）
+
+rpm -ivhpackage_name
+
+常用选项和参数：
+
+-i ： install的意思
+
+-v ： 查看更细的安装信息画面
+
+-h ： 以安装信息列显示安装进度
+
+--force ： 强制安装
+
+--test ： 测试一下该软件是否可以被安装到使用者的linux环境中，是否存在属性相依的问题
+
+--prefix： 将软件安装到指定目时使用，比如 --prefix /usr/local/package_name
+
+RPM升级与更新（upgrade和freshen）
+
+-Uvh ：后面接的软件即使没有安装过，系统也将予以直接安装；若后面接的软件有安装过旧版，自动更新到最新版
+
+-Fvh ：如果后面接的软件没有安装到你的linux系统中，则该软件不会被安装，只有安装到你的linux系统内的软件才会被升级
+
+RPM查询（query）
+
+常用选项和参数：
+
+-q ：仅查询后面接的软件名称是否有安装
+
+-qa：列出所有的已经安装在本机linux系统上的软件名称
+
+-qi ：列出该软件的详细信息
+
+-ql ：列出该软件的所有的文件与目录所在完整文件名
+
+-qc ：列出该软件所有的配置文件
+
+-qd ：列出该软件的所有说明文件
+
+-qR ：列出与该软件有关的相依软件所含文件
+
+-qf ：找出后面接的文件名属于哪个已安装的软件及
+
+RPM验证（Verify）
+
+选项和参数:
+
+-V : 若后面接的软件所含的文件被改动过，才会列出
+
+-Va：列出目前系统上面所有可能被改动过的文件
+
+-Vf：列出某个文件是否被改动过
+
+RPM卸载和重建数据库
+
+选项和参数：
+
+-e ：卸载后面接的软件
+
+--rebuilddb ：重建/var/lib/rpm数据库
+
+四、SRPM的使用
+
+默认值安装SRPM文件，使用rpmbuild命令
+
+--rebuild： 将SRPM进行编译和打包，产生RPM文件，但并不安装
+
+--recmpile：将SRPM进行编译、打包并安装
+
+SRPM使用的路径，以root用户为例
+
+/root/rpmbuild/SPECS该目录放置该软件的配置文件
+
+/root/rpmbuild/SOURCES该目录当中放置的是该软件的原始文件及config配置文件
+
+/root/rpmbuild/BUILD在编译的过程中，有些暂存的数据放到这个目录当中
+
+/root/rpmbuild/RPMS顺利编译成功后，将打包完成的文件放置在这个目录当中
+
+/root/rpmbuild/SRPMS放置的SRPM封装的文件
+
+SRPM的编译，由于SRPM需要编译，需要有make与其相关的程序，及gcc,c,c++等其他的编译用的程序语言来进行编译。配置文件为SPECS目录下的.spec文件。
+
+SRPM的编译指令：
+
+rpmbuild -basoftwarename.spec 编译并同时产生RPM和SRPM文件
+
+rpmbuild -bbsoftwarename.spec 仅编译成RPM文件
