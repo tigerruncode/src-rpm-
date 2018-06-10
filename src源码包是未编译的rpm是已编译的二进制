@@ -112,6 +112,6 @@ SRPM的编译，由于SRPM需要编译，需要有make与其相关的程序，�
 
 SRPM的编译指令：
 
-rpmbuild -basoftwarename.spec 编译并同时产生RPM和SRPM文件
+rpmbuild -ba  softwarename.spec 编译并同时产生RPM和SRPM文件
 
-rpmbuild -bbsoftwarename.spec 仅编译成RPM文件
+rpmbuild -bb  softwarename.spec 仅编译成RPM文件
